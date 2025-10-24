@@ -1,7 +1,6 @@
 /* ===== Base ===== */
 * { padding: 0; margin: 0; box-sizing: border-box; }
 html, body { height: 100%; }
-
 body{
   min-height: 100svh;
   background: hsl(0, 61%, 89%);
@@ -15,9 +14,10 @@ body{
     max(8px, env(safe-area-inset-right))
     max(16px, env(safe-area-inset-bottom))
     max(8px, env(safe-area-inset-left));
+  overflow-x: hidden; /* evita scroll lateral en landscape */
 }
 
-/* ===== Franja de logos (flex; se adapta en móviles) ===== */
+/* ===== Franja de logos ===== */
 .logos{
   width: min(920px, 96vw);
   margin: 6px auto 0;
@@ -27,21 +27,18 @@ body{
   gap: clamp(6px, 2vw, 16px);
   padding: 6px 6px 0;
 }
-
 .logos .logo{
   display: block;
   height: auto;
   width: clamp(90px, 24vw, 150px);
-  background: #ffffffcc;                 /* “fondito” legible */
+  background: #ffffffcc;                 /* fondito legible */
   border: 1px solid rgba(0,0,0,.06);
   border-radius: 12px;
   padding: 6px 10px;
   box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  object-fit: contain;
 }
-
-.logos .logo-mid{
-  width: clamp(100px, 26vw, 170px);
-}
+.logos .logo-mid{ width: clamp(100px, 26vw, 170px); }
 
 @media (max-width: 420px){
   .logos{ flex-wrap: wrap; justify-content: center; }
@@ -49,10 +46,10 @@ body{
   .logos .logo-mid{ order: 2; width: clamp(110px, 60vw, 160px); }
 }
 
-/* ===== Contenedor del juego (tarjeta clásica) ===== */
+/* ===== Contenedor del juego (tarjeta) ===== */
 .contenedor{
   width: min(920px, 96vw);
-  height: 280px;
+  height: 280px; /* alto normal (vertical) */
   margin: 4px auto 0;
   position: relative;
   background: linear-gradient(#b7d6c7, transparent) #ffe2d1;
@@ -61,10 +58,9 @@ body{
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,.08);
 }
-
 .stage{ position: relative; width: 100%; height: 100%; }
 
-/* Momentos del día (como ya tenías) */
+/* Momentos del día */
 .mediodia { background-color: #ffdcf3; }
 .tarde    { background-color: #ffadad; }
 .noche    { background-color: #aca8c7; }
@@ -108,14 +104,15 @@ body{
   text-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
-/* GAME OVER centrado dentro del juego */
+/* GAME OVER centrado */
 .game-over{
-  display: none;               /* <-- se queda oculto hasta que choques */
+  display: none;
   position: absolute;
-  inset: 0;                    /* ocupa todo el contenedor del juego */
-  place-items: center;         /* centrado cuando se muestre */
+  inset: 0;
+  display: none;
+  place-items: center;
   color: #7e928b;
-  font-size: 30px;
+  font-size: clamp(18px, 6vw, 30px); /* adapta en landscape */
   font-family: Verdana, sans-serif;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0,0,0,.2);
@@ -156,7 +153,7 @@ body{
   to  { background-position-x: -252px; }
 }
 
-/* Overlay bienvenida (igual que tenías) */
+/* ===== Overlay bienvenida (sin cambios) ===== */
 .welcome{
   position: fixed; inset: 0;
   background: radial-gradient(1200px 600px at 20% 10%, rgba(255,255,255,.06), transparent),
@@ -175,13 +172,11 @@ body{
   box-shadow: 0 20px 60px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.06);
   text-align: center;
 }
-
 .welcome-logo{
   width: clamp(64px, 12vw, 92px);
   height: auto; display: block; margin: 0 auto 12px;
   border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.25);
 }
-
 .welcome-title{
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-weight: 900; letter-spacing: .6px;
@@ -189,9 +184,7 @@ body{
   color: #ffffff;
   margin: 2px 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,.35);
 }
-
 .welcome-sub{ color: #dbeafe; margin: 0 0 14px; font-size: clamp(14px, 2.6vw, 18px); }
-
 .btn-play{
   appearance: none; border: 0; cursor: pointer;
   padding: 14px 18px; min-width: 220px; border-radius: 16px;
@@ -202,10 +195,43 @@ body{
   transition: transform .06s, box-shadow .2s, filter .2s;
 }
 .btn-play:active{ transform: translateY(1px); }
-
 .welcome-tips{ margin-top: 12px; font-size: clamp(12px, 2.2vw, 14px); color: #cbd5e1; }
 
+/* ===== Ajustes específicos para HORIZONTAL en móviles ===== */
+/* Pensado para pantallas bajitas (status bar + barra URL ocupan altura) */
 @media (orientation: landscape) and (max-height: 480px){
-  .welcome-card{ padding: 16px; border-radius: 18px; }
-  .btn-play{ padding: 12px 16px; min-width: 200px; }
+  body{ gap: 6px; padding: 6px 8px; }
+
+  .logos{
+    width: min(920px, 98vw);
+    gap: 8px;
+    padding: 4px 4px 0;
+    margin-top: 2px;
+  }
+  .logos .logo{
+    width: clamp(80px, 18vw, 120px);
+    padding: 4px 8px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.14);
+  }
+  .logos .logo-mid{ width: clamp(100px, 22vw, 140px); }
+
+  /* El juego se hace más bajo proporcionalmente a la altura disponible */
+  .contenedor{
+    height: clamp(160px, 42vh, 240px);
+    border-radius: 10px;
+  }
+
+  /* Tipografías un pelín más compactas */
+  .score{ font-size: 26px; }
+  .game-over{ font-size: clamp(16px, 5.5vw, 26px); }
+
+  .retry-wrap{ margin-top: 6px; }
+  .btn-retry{
+    padding: 10px 14px;
+    min-width: 180px;
+    font-size: .95rem;
+    box-shadow: 0 8px 18px rgba(139,92,246,.25);
+  }
 }
+
