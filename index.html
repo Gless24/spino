@@ -32,8 +32,8 @@
   <!-- Franja de logos (flex; sin absolute) -->
   <div class="logos">
     <img src="./Logo-Ag-14.png"       alt="Agencia Digital" class="logo">
-    <img src="./logo-much-nuevo1.png" alt="MUCH"            class="logo logo-mid"> <!-- opcional -->
-    <img src="./logo-sata.png"        alt="SATA"            class="logo">
+    <img src="./logo-much-nuevo1.png" alt="MUCH"class="logo logo-mid"> <!-- opcional -->
+    <img src="./logo-sata.png"        alt="SATA" class="logo">
   </div>
 
   <!-- Contenedor del juego -->
@@ -101,6 +101,7 @@
     var quizData = null;
     var quizAnswerIndex = null;
     var quizVisible = false;
+    var navigatingToRegistro = false;
 
     function Start() {
       gameOver   = document.querySelector(".game-over");
@@ -291,22 +292,30 @@
     }
 
     function validarQuiz(){
-      var msg = document.getElementById('quizMsg');
-      var sel = document.querySelector('input[name="q1"]:checked');
-      if(!sel){ msg.textContent='Selecciona una opción 😉'; msg.className='quiz-msg err'; return; }
-      if(Number(sel.value) === quizAnswerIndex){
-        msg.textContent='¡Correcto! Vamos a registrar tu premio.'; msg.className='quiz-msg ok';
-        setTimeout(function(){ window.location.href='registro.html'; }, 600);
-      }else{
-        msg.textContent='Respuesta incorrecta. Intenta de nuevo.'; msg.className='quiz-msg err';
-      }
-    }
+  var msg = document.getElementById('quizMsg');
+  var sel = document.querySelector('input[name="q1"]:checked');
+  if(!sel){ msg.textContent='Selecciona una opción 😉'; msg.className='quiz-msg err'; return; }
+  if(Number(sel.value) === quizAnswerIndex){
+    msg.textContent='¡Correcto! Vamos a registrar tu premio.'; msg.className='quiz-msg ok';
+
+    // 👇 Cerrar el quiz y permitir la navegación sin que el anti-cheat actúe
+    navigatingToRegistro = true;
+    quizVisible = false;
+    document.getElementById('quizOverlay').classList.remove('show');
+
+    setTimeout(function(){ window.location.href = 'registro.html'; }, 400);
+  }
+  else{
+    msg.textContent='Respuesta incorrecta. Intenta de nuevo.'; msg.className='quiz-msg err';
+  }
+}
 
     function antiCheatGuard(){
-      if (!quizVisible) return;
-      try { document.getElementById('quizOverlay').classList.remove('show'); } catch(e){}
-      location.replace('portada.html');
-    }
+  if (navigatingToRegistro) return;
+  if (!quizVisible) return;
+  try { document.getElementById('quizOverlay').classList.remove('show'); } catch(e){}
+  location.replace('portada.html');
+}
 
     function blockShortcutsDuringQuiz(e){
       if (!quizVisible) return;
