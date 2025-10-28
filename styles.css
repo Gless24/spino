@@ -237,55 +237,15 @@ body{
     box-shadow: 0 8px 18px rgba(139,92,246,.25);
   }
 }
-@media (orientation: landscape){
-  .logos{ display:none !important; }
-
-  /* Mantén padding seguro pero no uses vw como ancho fijo */
-  body{
-    gap: 8px;
-    padding:
-      6px
-      max(10px, env(safe-area-inset-right))
-      max(12px, env(safe-area-inset-bottom))
-      max(10px, env(safe-area-inset-left));
-  }
-
-  /* Usa 100% del contenedor (respeta el padding) y centra con margin auto */
-  .contenedor,
-  .retry-wrap{
-    width: 100%;
-    max-width: 1200px;     /* o el tope que prefieras */
-    margin-left: auto;
-    margin-right: auto;
-  }
-
+@media (orientation: landscape) and (max-height: 480px){
   .contenedor{
-    height: clamp(240px, 66vh, 420px);
-    border-radius: 14px;
+    height: clamp(160px, 42vh, 240px);
   }
-
-  .score{ font-size: clamp(22px, 3.2vw, 32px); top: 8px; right: 14px; }
-  .game-over{ font-size: clamp(18px, 5vw, 32px); }
-  .dino{ max-height: none !important; }  /* evita límites previos */
-}
-/* === Ajuste SOLO de la tarjeta de la pregunta en horizontal === */
-@media (orientation: landscape){
-  .quiz-card{
-    width: min(640px, 90vw);        /* más compacta en horizontal */
-    max-height: 80vh;              /* nunca más alta que la pantalla */
-    overflow-y: auto;              /* si sobra contenido, activa scroll interno */
-    border-radius: 14px;
-    padding: clamp(12px, 3vw, 20px);
+  .dino{
+    max-height: 70px;   /* evita que se “pierda” */
   }
-
-  /* Reduce un poco tipografías y márgenes dentro de la tarjeta */
-  .quiz-title{ font-size: clamp(16px, 3vw, 22px); margin-bottom: 6px; }
-  .quiz-sub{ font-size: clamp(12px, 2.5vw, 14px); margin-bottom: 8px; }
-  .quiz-q{ font-size: clamp(14px, 2.8vw, 18px); margin-bottom: 6px; }
-  .quiz-options{ gap: 8px; margin: 8px 0; }
-  .quiz-opt{ padding: 8px 10px; border-radius: 10px; }
 }
-/* Evita que el botón de retry se salga en horizontal */
-@media (orientation: landscape) and (max-width: 400px){
-  .btn-retry{ font-size: clamp(14px, 3.5vw, 16px); min-width: 140px; }
+@media (orientation: landscape) and (max-height: 360px){
+  .contenedor{ height: clamp(140px, 36vh, 200px); }
+  .dino{ max-height: 60px; }
 }
