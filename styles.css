@@ -57,6 +57,7 @@ body{
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  isolation: isolate;
 }
 .stage{ position: relative; width: 100%; height: 100%; }
 
@@ -72,6 +73,7 @@ body{
   background: url("dino.png") repeat-x 0 0;
   background-size: 336px 84px;
   background-position-x: 0px;
+  image-rendering: pixelated;
 }
 .dino-corriendo{ animation: animarDino .25s steps(2) infinite; }
 .dino-estrellado{ background-position-x: -252px; }
@@ -82,6 +84,7 @@ body{
   position: absolute; bottom: 0; left: 0;
   background: url("suelo.png") repeat-x 0 0;
   background-size: 50% 42px;
+  image-rendering: pixelated;
 }
 
 /* Obstáculos y nubes */
@@ -89,8 +92,9 @@ body{
   width: 46px; height: 96px;
   position: absolute; bottom: 16px; left: 600px; z-index: 1;
   background: url("cactus1.png") no-repeat;
+  image-rendering: pixelated;
 }
-.cactus2{ width: 98px; height: 66px; background: url("cactus2.png") no-repeat; }
+.cactus2{ width: 98px; height: 66px; background: url("cactus2.png") no-repeat; image-rendering: pixelated; }
 
 .nube{
   width: 92px; height: 26px; position: absolute; z-index: 0;
@@ -104,15 +108,14 @@ body{
   text-shadow: 0 1px 2px rgba(0,0,0,.2);
 }
 
-/* GAME OVER centrado */
+/* ===== GAME OVER centrado (regla única, fusionada) ===== */
 .game-over{
-  display: none;
   position: absolute;
   inset: 0;
-  display: none;
+  display: none;           /* oculto al inicio; el JS lo pone en grid */
   place-items: center;
   color: #7e928b;
-  font-size: clamp(18px, 6vw, 30px); /* adapta en landscape */
+  font-size: clamp(18px, 6vw, 30px);
   font-family: Verdana, sans-serif;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(0,0,0,.2);
@@ -198,7 +201,7 @@ body{
 .welcome-tips{ margin-top: 12px; font-size: clamp(12px, 2.2vw, 14px); color: #cbd5e1; }
 
 /* ===== Ajustes específicos para HORIZONTAL en móviles ===== */
-/* Pensado para pantallas bajitas (status bar + barra URL ocupan altura) */
+/* Pantallas bajitas: se reduce altura del juego pero el dino no se pierde */
 @media (orientation: landscape) and (max-height: 480px){
   body{ gap: 6px; padding: 6px 8px; }
 
@@ -233,4 +236,56 @@ body{
     font-size: .95rem;
     box-shadow: 0 8px 18px rgba(139,92,246,.25);
   }
+}
+@media (orientation: landscape){
+  .logos{ display:none !important; }
+
+  /* Mantén padding seguro pero no uses vw como ancho fijo */
+  body{
+    gap: 8px;
+    padding:
+      6px
+      max(10px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(10px, env(safe-area-inset-left));
+  }
+
+  /* Usa 100% del contenedor (respeta el padding) y centra con margin auto */
+  .contenedor,
+  .retry-wrap{
+    width: 100%;
+    max-width: 1200px;     /* o el tope que prefieras */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .contenedor{
+    height: clamp(240px, 66vh, 420px);
+    border-radius: 14px;
+  }
+
+  .score{ font-size: clamp(22px, 3.2vw, 32px); top: 8px; right: 14px; }
+  .game-over{ font-size: clamp(18px, 5vw, 32px); }
+  .dino{ max-height: none !important; }  /* evita límites previos */
+}
+/* === Ajuste SOLO de la tarjeta de la pregunta en horizontal === */
+@media (orientation: landscape){
+  .quiz-card{
+    width: min(640px, 90vw);        /* más compacta en horizontal */
+    max-height: 80vh;              /* nunca más alta que la pantalla */
+    overflow-y: auto;              /* si sobra contenido, activa scroll interno */
+    border-radius: 14px;
+    padding: clamp(12px, 3vw, 20px);
+  }
+
+  /* Reduce un poco tipografías y márgenes dentro de la tarjeta */
+  .quiz-title{ font-size: clamp(16px, 3vw, 22px); margin-bottom: 6px; }
+  .quiz-sub{ font-size: clamp(12px, 2.5vw, 14px); margin-bottom: 8px; }
+  .quiz-q{ font-size: clamp(14px, 2.8vw, 18px); margin-bottom: 6px; }
+  .quiz-options{ gap: 8px; margin: 8px 0; }
+  .quiz-opt{ padding: 8px 10px; border-radius: 10px; }
+}
+/* Evita que el botón de retry se salga en horizontal */
+@media (orientation: landscape) and (max-width: 400px){
+  .btn-retry{ font-size: clamp(14px, 3.5vw, 16px); min-width: 140px; }
 }
